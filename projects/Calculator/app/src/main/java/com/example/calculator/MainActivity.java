@@ -15,6 +15,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
+    // variables
+    int decimal = 0;
+    //track decimal places
+    boolean negative = false;
+    Button active_operation = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +42,13 @@ public class MainActivity extends AppCompatActivity {
         negative_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView screen = findViewById(R.id.screen_lower);
-                screen.setText(screen.getText()+"n");
+                if(negative == false){
+                    negative_button.setBackgroundColor(getColor(R.color.gold));
+                    negative = true;
+                }else if(negative == true){
+                    negative_button.setBackgroundColor(getColor(R.color.default_purple));
+                    negative = false;
+                }
             }
         });
 
@@ -46,8 +57,10 @@ public class MainActivity extends AppCompatActivity {
         decimal_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView screen = findViewById(R.id.screen_lower);
-                screen.setText(screen.getText()+".");
+                if(decimal == 0){
+                    decimal_button.setBackgroundColor(getColor(R.color.gold));
+                    decimal = 1;
+                }
             }
         });
 
@@ -56,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView screen = findViewById(R.id.screen_lower);
-                screen.setText(screen.getText()+"a");
+                resolve_operation(add_button);
             }
         });
 
@@ -66,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
         sub_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView screen = findViewById(R.id.screen_lower);
-                screen.setText(screen.getText()+"s");
+                resolve_operation(sub_button);
             }
         });
 
@@ -76,8 +87,7 @@ public class MainActivity extends AppCompatActivity {
         mult_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView screen = findViewById(R.id.screen_lower);
-                screen.setText(screen.getText()+"m");
+                resolve_operation(mult_button);
             }
         });
 
@@ -86,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
         div_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView screen = findViewById(R.id.screen_lower);
-                screen.setText(screen.getText()+"d");
+                resolve_operation(div_button);
             }
         });
 
@@ -96,8 +105,7 @@ public class MainActivity extends AppCompatActivity {
         equal_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView screen = findViewById(R.id.screen_lower);
-                screen.setText(screen.getText()+"e");
+                execute();
             }
         });
         equal_button.setOnLongClickListener(new View.OnLongClickListener() {
@@ -105,8 +113,16 @@ public class MainActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 TextView screen_upper = findViewById(R.id.screen_upper);
                 TextView screen_lower = findViewById(R.id.screen_lower);
-                screen_upper.setText("");
-                screen_lower.setText("");
+                screen_upper.setText("0.0");
+                screen_lower.setText("0.0");
+                if(active_operation != null) {
+                    active_operation.setBackgroundColor(getColor(R.color.default_purple));
+                }
+                active_operation = null;
+                decimal_button.setBackgroundColor(getColor(R.color.default_purple));
+                decimal = 0;
+                negative_button.setBackgroundColor(getColor(R.color.default_purple));
+                negative = false;
                 Toast.makeText(getApplicationContext(), "Screen Cleared", Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -122,11 +138,78 @@ public class MainActivity extends AppCompatActivity {
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView screen = findViewById(R.id.screen_lower);
-                screen.setText(screen.getText()+num);
-                // buttons write new digits to screen via string concatenation
+                TextView screen;
+                if(active_operation == null) {
+                    screen = findViewById(R.id.screen_upper);
+                }else{
+                    screen = findViewById(R.id.screen_lower);
+                }
+
+                float val = Float.parseFloat(screen.getText().toString());
+                boolean neg = false;
+                if(val < 0){
+                    val = val * -1;
+                    neg = true;
+                }
+
+                if(decimal == 0){
+                    val = val * 10 + Float.parseFloat(num);
+                }else{
+                    val = val + Float.parseFloat(num)/(float)(Math.pow(10, decimal));
+                    decimal++;
+                }
+
+                if(negative){
+                    val = val * -1;
+                }else if(neg){
+                    val = val * -1;
+                }
+
+                screen.setText(String.valueOf(val));
             }
         });
         layout.addView(newButton);
+    }
+
+    private void resolve_operation(Button operation){
+        execute();
+        change_active_operation(operation);
+    }
+
+    private void change_active_operation(Button new_operation){
+        if(active_operation != null){
+            active_operation.setBackgroundColor(getColor(R.color.default_purple));
+        }
+        active_operation = new_operation;
+        if(active_operation != null) {
+            active_operation.setBackgroundColor(getColor(R.color.gold));
+        }
+    }
+
+    private void execute(){
+        TextView screen_upper = findViewById(R.id.screen_upper);
+        TextView screen_lower = findViewById(R.id.screen_lower);
+        float x = Float.parseFloat(screen_upper.getText().toString());
+        float y = Float.parseFloat(screen_lower.getText().toString());
+
+        if (active_operation == findViewById(R.id.add)) {
+            screen_upper.setText(String.valueOf(x+y));
+        } else if (active_operation == findViewById(R.id.subtract)) {
+            screen_upper.setText(String.valueOf(x-y));
+        } else if (active_operation == findViewById(R.id.multiply)) {
+            screen_upper.setText(String.valueOf(x*y));
+        } else if (active_operation == findViewById(R.id.divide)) {
+            if(y != 0) {
+                screen_upper.setText(String.valueOf(x/y));
+            } else{
+                Toast.makeText(getApplicationContext(), "ERROR: CANNOT DIVIDE BY 0", Toast.LENGTH_SHORT).show();
+            }
+        }
+        screen_lower.setText("0");
+
+        Button decimal_button = findViewById(R.id.decimal);
+        decimal_button.setBackgroundColor(getColor(R.color.default_purple));
+        decimal = 0;
+        change_active_operation(null);
     }
 }
