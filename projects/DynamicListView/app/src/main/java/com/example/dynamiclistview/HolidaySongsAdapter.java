@@ -19,11 +19,10 @@ import com.android.volley.toolbox.NetworkImageView;
 import java.util.ArrayList;
 
 public class HolidaySongsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener{
-    private static final int IMAGE_SIZE = 256;
     private Context context;
     private ArrayList<HolidaySongs> holidaySongs;
     private ImageLoader imageLoader;
-    public static final String EXTRA_SELECTED_ITEM = "com/example/dynamiclistview.selecteditem";
+    public static final String EXTRA_SELECTED_ITEM = "com.example.dynamiclistview.selecteditem";
     public HolidaySongsAdapter(Context context, ArrayList<HolidaySongs> holidaySongs, RequestQueue queue) {
         this.context = context;
         this.holidaySongs = holidaySongs;
@@ -85,16 +84,14 @@ public class HolidaySongsAdapter extends BaseAdapter implements AdapterView.OnIt
         tv.setText(album.getArtist());
 
         NetworkImageView image = (NetworkImageView) view.findViewById(R.id.albumDisplayImageView);
-        image.setImageUrl(album.getImage(), imageLoader);
+        image.setImageUrl(album.getPlaylistImage(), imageLoader);
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
     {
-        Intent intent = ViewSongs.newIntent(adapterView.getContext(),
-                this);
+        Intent intent = ViewSongs.newIntent(adapterView.getContext(),this);
         intent.putExtra(EXTRA_SELECTED_ITEM, i);
         adapterView.getContext().startActivity(intent);
     }
-
 }

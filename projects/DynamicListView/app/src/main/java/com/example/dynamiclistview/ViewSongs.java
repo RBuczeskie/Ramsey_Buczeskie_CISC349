@@ -30,7 +30,7 @@ public class ViewSongs extends AppCompatActivity {
             adapter.populateView(findViewById(R.id.albumlayout), index);
         }
 
-        Button mShowAnswer = (Button) findViewById(R.id.done_button);
+        Button mShowAnswer = (Button) findViewById(R.id.back_button);
         mShowAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
