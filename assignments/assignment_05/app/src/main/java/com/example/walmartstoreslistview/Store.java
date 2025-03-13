@@ -12,13 +12,7 @@ public class Store {
             this.name = object.getString("Store_Name");
             this.address = object.getString("Address");
             this.phoneNumber = object.getString("Phone_Number");
-            String[] citystate = object.getString("City_and_State").split(",");
-            this.city = citystate[0];
-        }
-
-    public Store()
-        {
-
+            this.city = object.getString("city");
         }
 
         public String getName() {

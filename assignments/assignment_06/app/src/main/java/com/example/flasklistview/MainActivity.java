@@ -1,15 +1,17 @@
-package com.example.walmartstoreslistview;
+package com.example.flasklistview;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,19 +22,32 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    protected static final String url = "https://nua.insufficient-light.com/data/walmart_store_locations.json";
+    protected static final String url = "http://IP.IP.IP.IP:5000/all";
+    // url needs to change
+
+    RequestQueue queue;
+
+    List<Customer> customerList;
+
+    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        FragmentManager fm = getSupportFragmentManager();
 
-        RequestQueue queue = Volley.newRequestQueue(this);
+        list = (ListView) findViewById(R.id.listView);
+
+        customerList = new ArrayList<Customer>();
+
+        // Instantiate the RequestQueue.
+        queue = Volley.newRequestQueue(this);
         queue.start();
 
         JsonArrayRequest jsonArrayRequest =
@@ -43,21 +58,16 @@ public class MainActivity extends AppCompatActivity {
                             public void onResponse(JSONArray response) {
                                 for (int i = 0; i < response.length(); i++) {
                                     try {
-                                        JSONObject obj = response.getJSONObject(i);
-                                        String state = obj.getString("state");
-                                        if (state.equals("PA"))
-                                        {
-                                            Store store = new Store(response.getJSONObject(i));
-                                            Fragment fragment = new StoreFragment(store);
-                                            fm.beginTransaction()
-                                                    .add(R.id.fragmentContainer, fragment)
-                                                    .commit();
-
-                                        }
+                                        Customer customer = new Customer(response.getJSONObject(i));
+                                        customerList.add(customer);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                 }
+                                CustomerListAdapter adapter = new CustomerListAdapter(list.getContext(), customerList, queue);
+                                list.setAdapter(adapter);
+                                list.setOnItemClickListener(adapter);
+
                             }
                         }, new Response.ErrorListener() {
                     @Override
@@ -67,5 +77,15 @@ public class MainActivity extends AppCompatActivity {
                 });
         // Add the request to the RequestQueue.
         queue.add(jsonArrayRequest);
+
+        Button addButton = (Button)findViewById(R.id.add_button);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start AddCustomerActivity
+                Intent i = AddCustomerActivity.newIntent(MainActivity.this, queue);
+                startActivity(i);
+            }
+        });
     }
 }
