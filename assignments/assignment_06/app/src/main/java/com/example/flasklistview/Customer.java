@@ -68,6 +68,10 @@ public class Customer {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    public List<String> getComments() {return comments;}
-    public void setComments(List<String> comments){this.comments = comments;}
+    public List<String> getComments() {
+        return comments;
+    }
+    public void setComments(List<String> comments){
+        this.comments = comments;
+    }
 }

@@ -29,8 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DisplayCustomerActivity extends AppCompatActivity {
-    protected static final String url = "http://IP.IP.IP.IP:5000/update";
-    //url needs to change
+    protected static final String url = "http://10.0.0.39:5000/update";
     static CustomerListAdapter adapter;
     static RequestQueue queue;
     Context context;

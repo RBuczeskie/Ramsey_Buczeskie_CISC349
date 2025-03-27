@@ -1,5 +1,6 @@
 import json
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from flask import Flask
 from flask import request
 from flask.json import jsonify
@@ -48,7 +49,7 @@ def update():
     newvalues = {"$push": {'comments':comments}}
     
     _id = collection.update_one(filter, newvalues)
-    return json.dumps({'_id':id})
+    return json.dumps({'_id':ObjectId(id)})
 	
 #Select all users
 #@app.route('/all', methods=['POST'])
@@ -56,7 +57,7 @@ def update():
 def all():
     collection = db["customers"]
     customers = list(collection.find())
-    #print(customers)
+    print(customers)
     #convert _id to str
     return json.dumps(customers, default=str)
 	

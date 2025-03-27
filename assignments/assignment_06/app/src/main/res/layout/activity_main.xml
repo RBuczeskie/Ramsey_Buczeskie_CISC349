@@ -9,22 +9,29 @@
     android:columnCount="1"
     android:rowCount="5">
 
-    <ListView
-        android:id="@+id/listView"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_row="0"
         android:layout_column="0"
-        android:layout_rowSpan="4"
-        />
+        android:layout_rowSpan="4">
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </ScrollView>
 
-    <Button
-        android:id="@+id/add_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/add_customer"
         android:layout_row="4"
-        android:layout_column="0"/>
+        android:layout_column="0">
+        <Button
+            android:id="@+id/add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/add_customer"/>
+    </LinearLayout>
 
 </GridLayout>

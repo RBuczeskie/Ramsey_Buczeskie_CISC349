@@ -23,8 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AddCustomerActivity extends AppCompatActivity {
-    protected static final String url = "http://IP.IP.IP.IP:5000/add";
-    //url needs to change
+    protected static final String url = "http://10.0.0.39:5000/add";
     protected static RequestQueue queue;
     protected static Context context;
 

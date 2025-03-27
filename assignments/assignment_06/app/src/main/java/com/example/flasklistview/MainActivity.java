@@ -27,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    protected static final String url = "http://IP.IP.IP.IP:5000/all";
-    // url needs to change
+    protected static final String url = "http://10.0.0.39:5000/all";
 
     RequestQueue queue;
 
@@ -50,6 +49,26 @@ public class MainActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
         queue.start();
 
+        populateList();
+
+        Button addButton = (Button)findViewById(R.id.add_button);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start AddCustomerActivity
+                Intent i = AddCustomerActivity.newIntent(MainActivity.this, queue);
+                startActivity(i);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        populateList();
+    }
+    public void populateList(){
+        customerList.clear();
         JsonArrayRequest jsonArrayRequest =
                 new JsonArrayRequest(Request.Method.GET,
                         url, null,
@@ -77,15 +96,5 @@ public class MainActivity extends AppCompatActivity {
                 });
         // Add the request to the RequestQueue.
         queue.add(jsonArrayRequest);
-
-        Button addButton = (Button)findViewById(R.id.add_button);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start AddCustomerActivity
-                Intent i = AddCustomerActivity.newIntent(MainActivity.this, queue);
-                startActivity(i);
-            }
-        });
     }
 }
