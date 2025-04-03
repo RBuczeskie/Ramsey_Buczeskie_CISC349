@@ -1,4 +1,4 @@
-package com.example.cameratest;
+package com.example.hustagram;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,72 +32,64 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity {
-    static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView imageView;
     BitmapDrawable drawable;
     RequestQueue queue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        Button capture = findViewById(R.id.camera_button);
+        Button capture_image_button = findViewById(R.id.capture_image_button);
+        Button upload_image_button = findViewById(R.id.upload_image_button);
         imageView = findViewById(R.id.cameraImageView);
 
         queue = Volley.newRequestQueue(this);
         queue.start();
 
-        capture.setOnClickListener(new View.OnClickListener() {
-
+        capture_image_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CameraTest","in Click");
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, 1);
             }
         });
 
-        Button list = findViewById(R.id.list_button);
-        list.setOnClickListener(new View.OnClickListener() {
-
+        upload_image_button.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                Log.d("CameraTest","in list Click");
-                Intent i = new Intent(MainActivity.this, ViewActivity.class);
-                startActivity(i);
-            }
-        });
-
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if (resultCode == RESULT_OK) {
-                assert data != null;
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                imageView.setImageBitmap(imageBitmap);
-
+            public void onClick(View v){
                 drawable = (BitmapDrawable) imageView.getDrawable();
                 final Bitmap bitmap = drawable.getBitmap();
-
                 uploadToServer(encodeToBase64(bitmap,Bitmap.CompressFormat.PNG,100));
-
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "You cancelled the operation", Toast.LENGTH_SHORT).show();
             }
-        }
-    }
+        });
 
-    public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
-        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
-        image.compress(compressFormat, quality, byteArrayOS);
-        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
     }
+            @Override
+            protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+                super.onActivityResult(requestCode, resultCode, data);
+                if (requestCode == 1) {
+                    if (resultCode == RESULT_OK) {
+                        assert data != null;
+                        Bundle extras = data.getExtras();
+                        Bitmap imageBitmap = (Bitmap) extras.get("data");
+                        imageView.setImageBitmap(imageBitmap);
+
+                    } else if (resultCode == RESULT_CANCELED) {
+                        Toast.makeText(this, "You cancelled the operation", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
+                ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+                image.compress(compressFormat, quality, byteArrayOS);
+                return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+            };
 
     private void uploadToServer(final String image) {
-
 
         JSONObject json = new JSONObject();
         try {
