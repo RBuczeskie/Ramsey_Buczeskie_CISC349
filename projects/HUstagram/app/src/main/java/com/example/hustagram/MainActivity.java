@@ -9,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -33,7 +34,9 @@ import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity {
     ImageView imageView;
+    EditText edit;
     BitmapDrawable drawable;
+    String comment_string;
     RequestQueue queue;
 
     @Override
@@ -44,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button capture_image_button = findViewById(R.id.capture_image_button);
         Button upload_image_button = findViewById(R.id.upload_image_button);
+        Button view_images_button = findViewById(R.id.view_images_button);
         imageView = findViewById(R.id.cameraImageView);
+        edit = findViewById(R.id.edit_text);
 
         queue = Volley.newRequestQueue(this);
         queue.start();
@@ -61,8 +66,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 drawable = (BitmapDrawable) imageView.getDrawable();
-                final Bitmap bitmap = drawable.getBitmap();
-                uploadToServer(encodeToBase64(bitmap,Bitmap.CompressFormat.PNG,100));
+                comment_string = edit.getText().toString();
+                if (drawable != null && ! comment_string.equals("")) {
+                    final Bitmap bitmap = drawable.getBitmap();
+                    uploadToServer(encodeToBase64(bitmap, Bitmap.CompressFormat.PNG, 100), comment_string);
+                } else {
+                    Toast.makeText(MainActivity.this, "Please take a picture and write a comment to upload.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        view_images_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, ViewActivity.class);
+                startActivity(i);
             }
         });
 
@@ -89,22 +107,23 @@ public class MainActivity extends AppCompatActivity {
                 return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
             };
 
-    private void uploadToServer(final String image) {
+    private void uploadToServer(final String image, final String comment) {
 
         JSONObject json = new JSONObject();
         try {
-            json.put("store", "amz");
             json.put("image", image);
+            json.put("comment", comment);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        String url = "http://10.2.106.60:5000/image";
+        String url = "http://10.0.0.39:5000/image";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, json,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("Hello", "Response: " + response.toString());
+                        Toast.makeText(MainActivity.this, "Image uploaded.", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
             @Override

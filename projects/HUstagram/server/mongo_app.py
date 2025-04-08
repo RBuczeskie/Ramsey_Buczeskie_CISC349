@@ -66,7 +66,7 @@ def image_save():
     collection = db["image"]
     content = request.get_json()
     _id = collection.insert_one(content)
-    return json.dumps({'id' : str(_id.insterted_id)})
+    return json.dumps({'id' : str(_id.inserted_id)})
     
 @app.route('/images', methods=['GET'])
 def image_list():

@@ -18,6 +18,12 @@
         android:theme="@style/Theme.HUstagram"
         tools:targetApi="31">
         <activity
+            android:name=".ViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewImage"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
