@@ -28,6 +28,22 @@ public class ViewItem extends AppCompatActivity {
             adapter.populateView(findViewById(R.id.item_view), index);
         }
 
+        Button edit_button = (Button) findViewById(R.id.edit_button);
+        edit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        Button delete_button = (Button) findViewById(R.id.delete_button);
+        delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override

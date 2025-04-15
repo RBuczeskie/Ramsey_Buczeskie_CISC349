@@ -12,6 +12,7 @@
         android:layout_gravity="bottom"/>
     <TextView
         android:id="@+id/item_name"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
@@ -21,17 +22,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:textSize="12sp"/>
+        android:textSize="24sp"/>
     <TextView
         android:id="@+id/item_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:textSize="12sp"/>
+        android:textSize="24sp"/>
     <TextView
         android:id="@+id/item_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:textSize="12sp"/>
+        android:textSize="24sp"/>
+    <Button
+        android:id="@+id/edit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Record"
+        android:layout_gravity="bottom"/>
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Item"
+        android:layout_gravity="bottom"/>
 </LinearLayout>

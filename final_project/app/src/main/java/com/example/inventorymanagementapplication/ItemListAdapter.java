@@ -90,11 +90,11 @@ public class ItemListAdapter extends BaseAdapter {
         TextView textView = view.findViewById(R.id.item_name);
         textView.setText(item_names.get(index));
         textView = view.findViewById(R.id.item_count);
-        textView.setText(item_counts.get(index));
+        textView.setText(item_counts.get(index)+" available at ");
         textView = view.findViewById(R.id.item_location);
         textView.setText(item_locations.get(index));
         textView = view.findViewById(R.id.item_description);
-        textView.setText(item_descriptions.get(index));
+        textView.setText("Item Description: "+item_descriptions.get(index));
     }
 
 }
