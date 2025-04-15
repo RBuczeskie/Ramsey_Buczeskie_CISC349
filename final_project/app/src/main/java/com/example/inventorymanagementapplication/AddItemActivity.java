@@ -30,6 +30,9 @@ public class AddItemActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_item);
 
         EditText name_text = findViewById(R.id.name_text);
+        EditText count_text = findViewById(R.id.count_text);
+        EditText location_text = findViewById(R.id.location_text);
+        EditText description_text = findViewById(R.id.description_text);
         Button add_item_button = findViewById(R.id.add_item_button);
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -39,10 +42,21 @@ public class AddItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 String item_name = name_text.getText().toString();
+                String item_count_string = count_text.getText().toString();
+                String item_location = location_text.getText().toString();
+                if (item_name.equals("") || item_count_string.equals("") || item_location.equals("")) {
+                    Toast.makeText(AddItemActivity.this, "Please enter a name, count, and location for the item.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Integer item_count = Integer.valueOf(item_count_string);
+                String item_description = description_text.getText().toString();
 
                 JSONObject json = new JSONObject();
                 try {
                     json.put("name", item_name);
+                    json.put("count", item_count);
+                    json.put("location", item_location);
+                    json.put("description", item_description);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

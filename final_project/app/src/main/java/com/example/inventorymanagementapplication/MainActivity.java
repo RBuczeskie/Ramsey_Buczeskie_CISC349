@@ -38,52 +38,19 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        updateMain();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         EditText search_bar = findViewById(R.id.search_bar);
-        Button filter_button = findViewById(R.id.filter_button);
         Button add_item_button = findViewById(R.id.add_item_button);
-        ListView item_list = findViewById(R.id.item_list);
-
-        ArrayList<String> item_names = new ArrayList<String>();
-
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.start();
-        String url = getString(R.string.server_url_root)+"/images";
-        JsonArrayRequest jsonArrayRequest =
-                new JsonArrayRequest(Request.Method.GET,
-                        url, null,
-                        new Response.Listener<JSONArray>() {
-                            @Override
-                            public void onResponse(JSONArray response) {
-                                for (int i = 0; i < response.length(); i++) {
-                                    try {
-                                        JSONObject data = response.getJSONObject(i);
-                                        String item_name = data.getString("name");
-
-                                        item_names.add(item_name);
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                Log.d("ViewActivity", "Result size " + item_names.size());
-                                ItemListAdapter adapter = new ItemListAdapter(item_list.getContext(), item_names);
-                                item_list.setAdapter(adapter);
-
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("JSONArray Error", "Error:" + error);
-                    }
-                });
-        // Add the request to the RequestQueue.
-        queue.add(jsonArrayRequest);
 
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -100,13 +67,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        filter_button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Toast.makeText(MainActivity.this, "Filter Button Clicked.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         add_item_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -119,6 +79,73 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void updateMain(){
-        Toast.makeText(MainActivity.this, "Main Activity page updated.", Toast.LENGTH_SHORT).show();
+        EditText search_bar = findViewById(R.id.search_bar);
+        ArrayList<ArrayList<ArrayList<String>>> items = new ArrayList<ArrayList<ArrayList<String>>>();
+        // [
+        //      [
+        //          [name, count, location a, description],
+        //          [name, count, location a, description]...
+        //      ],
+        //      [
+        //          [name, count, location b, description]...
+        //      ]...
+        //  ]
+        ListView item_list = findViewById(R.id.item_list);
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.start();
+        String url = getString(R.string.server_url_root)+"/get_items";
+        JsonArrayRequest jsonArrayRequest =
+                new JsonArrayRequest(Request.Method.GET,
+                        url, null,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                for (int i = 0; i < response.length(); i++) {
+                                    try {
+                                        JSONObject data = response.getJSONObject(i);
+                                        String item_name = data.getString("name");
+
+                                        if (item_name.contains(search_bar.getText().toString())) {
+                                            ArrayList<String> new_item = new ArrayList<String>();
+                                            new_item.add(item_name);
+                                            new_item.add(data.getString("count"));
+                                            new_item.add(data.getString("location"));
+                                            new_item.add(data.getString("description"));
+
+                                            Boolean location_known = false;
+                                            for (int j = 0; j < items.size(); j++){
+                                                if (items.get(j).get(0).get(2).equals(new_item.get(2))){
+                                                // if locations are same
+                                                    items.get(j).add(new_item);
+                                                    location_known = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (! location_known){
+                                                ArrayList<ArrayList<String>> new_location_list = new ArrayList<ArrayList<String>>();
+                                                new_location_list.add(new_item);
+                                                items.add(new_location_list);
+                                            }
+                                        }
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                Log.d("ViewActivity", "Result size " + items.size());
+                                ItemListAdapter adapter = new ItemListAdapter(item_list.getContext(), items);
+                                item_list.setAdapter(adapter);
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("JSONArray Error", "Error:" + error);
+                    }
+                });
+        // Add the request to the RequestQueue.
+        queue.add(jsonArrayRequest);
     }
 }

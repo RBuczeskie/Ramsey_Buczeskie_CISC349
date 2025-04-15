@@ -20,6 +20,9 @@
             android:name=".AddItemActivity"
             android:exported="false" />
         <activity
+            android:name=".ViewItem"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

@@ -19,13 +19,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemListAdapter extends BaseAdapter {
-    List<String> item_names;
+    ArrayList<String> item_names = new ArrayList<String>();
+    ArrayList<String> item_counts = new ArrayList<String>();
+    ArrayList<String> item_locations = new ArrayList<String>();
+    ArrayList<String> item_descriptions = new ArrayList<String>();
+
     private Context context;
     public static final String EXTRA_SELECTED_ITEM = "com.example.inventorymanagementapplication.selecteditem";
 
-    public ItemListAdapter(Context context, ArrayList<String> item_names) {
+    public ItemListAdapter(Context context, ArrayList<ArrayList<ArrayList<String>>> items) {
         this.context = context;
-        this.item_names = item_names;
+        for (int i=0; i < items.size(); i++){
+            for (int j=0; j < items.get(i).size(); j++){
+                item_names.add(items.get(i).get(j).get(0));
+                item_counts.add(items.get(i).get(j).get(1));
+                item_locations.add(items.get(i).get(j).get(2));
+                item_descriptions.add(items.get(i).get(j).get(3));
+            }
+        }
     }
 
 
@@ -54,11 +65,13 @@ public class ItemListAdapter extends BaseAdapter {
 
         Log.d("ItemListAdapter", "Index " + i);
 
-        String name = item_names.get(i);
-
         TextView item_name = view.findViewById(R.id.item_name);
+        TextView item_count = view.findViewById(R.id.item_count);
+        TextView item_location = view.findViewById(R.id.item_location);
 
-        item_name.setText(name);
+        item_name.setText(item_names.get(i));
+        item_count.setText(item_counts.get(i));
+        item_location.setText(item_locations.get(i));
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +89,12 @@ public class ItemListAdapter extends BaseAdapter {
     public void populateView(View view, int index){
         TextView textView = view.findViewById(R.id.item_name);
         textView.setText(item_names.get(index));
+        textView = view.findViewById(R.id.item_count);
+        textView.setText(item_counts.get(index));
+        textView = view.findViewById(R.id.item_location);
+        textView.setText(item_locations.get(index));
+        textView = view.findViewById(R.id.item_description);
+        textView.setText(item_descriptions.get(index));
     }
 
 }

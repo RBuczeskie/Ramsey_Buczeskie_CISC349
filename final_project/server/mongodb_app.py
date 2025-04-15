@@ -11,6 +11,7 @@ app = Flask(__name__)
 client = MongoClient('mongodb+srv://ramseyjbuczeskie47:34035605@cisc349.aqymd.mongodb.net/?retryWrites=true&w=majority&appName=CISC349', tlsCAFile=certifi.where())
 
 db = client["CISC349final"]
+collection = db["example_collection"]
 
 @app.route('/')
 def index():
@@ -18,10 +19,15 @@ def index():
 
 @app.route("/add_item", methods=["POST"])
 def add_item():
-    collection = db["locationA"]
     content = request.get_json()
     _id = collection.insert_one(content)
     return json.dumps({'id' : str(_id.inserted_id)})
+    
+@app.route('/get_items', methods=['GET'])
+def image_list():
+    items = list(collection.find())
+    print(f"Got {len(items)} items.")
+    return json.dumps(items, default=str)
     
 
 if __name__ == "__main__":
