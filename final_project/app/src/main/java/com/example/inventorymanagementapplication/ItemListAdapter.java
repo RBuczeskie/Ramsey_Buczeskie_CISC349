@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemListAdapter extends BaseAdapter {
+    ArrayList<String> item_ids = new ArrayList<String>();
     ArrayList<String> item_names = new ArrayList<String>();
     ArrayList<String> item_counts = new ArrayList<String>();
     ArrayList<String> item_locations = new ArrayList<String>();
@@ -26,15 +27,19 @@ public class ItemListAdapter extends BaseAdapter {
 
     private Context context;
     public static final String EXTRA_SELECTED_ITEM = "com.example.inventorymanagementapplication.selecteditem";
+    String item_description;
 
     public ItemListAdapter(Context context, ArrayList<ArrayList<ArrayList<String>>> items) {
         this.context = context;
         for (int i=0; i < items.size(); i++){
             for (int j=0; j < items.get(i).size(); j++){
-                item_names.add(items.get(i).get(j).get(0));
-                item_counts.add(items.get(i).get(j).get(1));
-                item_locations.add(items.get(i).get(j).get(2));
-                item_descriptions.add(items.get(i).get(j).get(3));
+                item_ids.add(items.get(i).get(j).get(0));
+                item_names.add(items.get(i).get(j).get(1));
+                item_counts.add(items.get(i).get(j).get(2));
+                item_locations.add(items.get(i).get(j).get(3));
+                item_description = items.get(i).get(j).get(4);
+                if (item_description.equals("")){item_description = "No description.";}
+                item_descriptions.add(item_description);
             }
         }
     }
@@ -86,15 +91,32 @@ public class ItemListAdapter extends BaseAdapter {
         return view;
     }
 
-    public void populateView(View view, int index){
-        TextView textView = view.findViewById(R.id.item_name);
-        textView.setText(item_names.get(index));
+    public ArrayList<String> populateView(View view, int index){
+        ArrayList<String> item = new ArrayList<String>();
+        // [id, name, count, location, description]
+        String id = item_ids.get(index);
+        String name = item_names.get(index);
+        String count = item_counts.get(index);
+        String location = item_locations.get(index);
+        String description = item_descriptions.get(index);
+
+        TextView textView = view.findViewById(R.id.item_id);
+        textView.setText("ID: "+id);
+        item.add(id);
+        textView = view.findViewById(R.id.item_name);
+        textView.setText(name);
+        item.add(name);
         textView = view.findViewById(R.id.item_count);
-        textView.setText(item_counts.get(index)+" available at ");
+        textView.setText(count+" available at ");
+        item.add(count);
         textView = view.findViewById(R.id.item_location);
-        textView.setText(item_locations.get(index));
+        textView.setText(location);
+        item.add(location);
         textView = view.findViewById(R.id.item_description);
-        textView.setText("Item Description: "+item_descriptions.get(index));
+        textView.setText("Item Description: "+description);
+        item.add(description);
+
+        return item;
     }
 
 }

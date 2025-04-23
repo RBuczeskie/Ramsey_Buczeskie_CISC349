@@ -29,6 +29,12 @@ def image_list():
     print(f"Got {len(items)} items.")
     return json.dumps(items, default=str)
     
+@app.route('/delete_item', methods=['PUT'])
+def delete_item():
+    collection.delete_one({"_id:" : ObjectId(request.args.get("id"))})
+    print("Deleted item.")
+    return request.args.get("id")
+    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

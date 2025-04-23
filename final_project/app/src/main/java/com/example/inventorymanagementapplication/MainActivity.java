@@ -83,11 +83,11 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<ArrayList<ArrayList<String>>> items = new ArrayList<ArrayList<ArrayList<String>>>();
         // [
         //      [
-        //          [name, count, location a, description],
-        //          [name, count, location a, description]...
+        //          [_id, name, count, location a, description],
+        //          [_id, name, count, location a, description]...
         //      ],
         //      [
-        //          [name, count, location b, description]...
+        //          [_id, name, count, location b, description]...
         //      ]...
         //  ]
         ListView item_list = findViewById(R.id.item_list);
@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         if (item_name.contains(search_bar.getText().toString())) {
                                             ArrayList<String> new_item = new ArrayList<String>();
+                                            new_item.add(data.getString("_id"));
                                             new_item.add(item_name);
                                             new_item.add(data.getString("count"));
                                             new_item.add(data.getString("location"));
